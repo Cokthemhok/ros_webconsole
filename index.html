@@ -15,12 +15,12 @@
   <!-- EventEmitter2 is the sole dependency of roslibjs -->
   <script src="js/ros/eventemitter2/eventemitter2.js"></script>
   <!-- Roslibjs handles core ROS functionality in the browser -->
-  <script src="js/ros/roslibjs/roslib.js"></script>
+  <script src="js/roslib.js"></script>
   <!-- ROS2DJS -->
   <!-- EaselJS is a dependency of ros2djs -->
   <script src="js/ros/easeljs/easeljs.js"></script>
   <!-- Ros2djs provides 2D scene support, including mapping and more -->
-  <script src="js/ros/ros2djs/ros2d.js"></script>
+  <script src="js/ros2d.js"></script>
 
   <!-- ROS3DJS -->
   <!-- Three.js is the WebGL rendering library -->
@@ -30,11 +30,11 @@
   <!-- ColladaLoader loads collada models of the robot -->
 	<script src="js/ros/ColladaLoader/ColladaLoader.js"></script>
   <!-- Ros3djs provides 3D scene support, including mapping and more -->
-  <script src="js/ros/ros3djs/ros3d.js"></script>
+  <script src="js/ros3d.js"></script>
   <!-- NAV2D -->
-  <script src="js/ros/nav2djs/nav2d.js"></script>
+  <script src="js/nav2d.js"></script>
   <!-- ROS MAP  - Editor for maps -->
-  <script src="js/ros/rosmapjs/rosmap.js"></script>
+  <script src="js/rosmap.js"></script>
   <script src="js/console/rosconsole.js"></script>
 
   <script>
@@ -47,7 +47,7 @@
 
       var runControl = function(json) {
 
-        var name_page = "ROS Web console";
+        var name_page = "MKAC AGV WEB DASHBOARD";
         var connection = json.server;
 
         var ros = new ROSCONSOLE.controller({
@@ -56,7 +56,7 @@
         });
 
         var windowController = new ROSCONSOLE.WindowController(name_page);
-        /*
+        
         // Create the scene manager and view port for the 3D world.
         var viewer3D = new ROS3D.Viewer({
           divID: 'threed-map',
@@ -73,7 +73,7 @@
           height: heightPage,
           path: json.path_mesh
         });
-*/
+
         var square = Math.min(widthPage, heightPage);
         var viewer = new ROS2D.Viewer({
           divID: 'nav',
