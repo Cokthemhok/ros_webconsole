@@ -1,0 +1,52 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/coffee/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/coffee/catkin_ws/src/navigation/amcl/include/**",
+        "/home/coffee/catkin_ws/src/navigation/base_local_planner/include/**",
+        "/home/coffee/catkin_ws/src/navigation/carrot_planner/include/**",
+        "/home/coffee/catkin_ws/src/navigation/clear_costmap_recovery/include/**",
+        "/home/coffee/catkin_ws/src/coffee_robot/include/**",
+        "/home/coffee/catkin_ws/src/coffee_vel_convert/include/**",
+        "/home/coffee/catkin_ws/src/navigation/costmap_2d/include/**",
+        "/home/coffee/catkin_ws/src/docking/include/**",
+        "/home/coffee/catkin_ws/src/navigation/dwa_local_planner/include/**",
+        "/opt/ros/melodic/share/fetch_gazebo/include/**",
+        "/home/coffee/catkin_ws/src/fetch_open_auto_dock/include/**",
+        "/home/coffee/catkin_ws/src/navigation/global_planner/include/**",
+        "/home/coffee/catkin_ws/src/laser_filters/include/**",
+        "/home/coffee/catkin_ws/src/navigation/map_server/include/**",
+        "/home/coffee/catkin_ws/src/mir_robot/mir_dwb_critics/include/**",
+        "/home/coffee/catkin_ws/src/navigation/move_base/include/**",
+        "/home/coffee/catkin_ws/src/navigation/move_slow_and_clear/include/**",
+        "/home/coffee/catkin_ws/src/mpc_local_planner/mpc_local_planner/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_bridge/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_slam/mrpt_ekf_slam_2d/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_slam/mrpt_ekf_slam_3d/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_slam/mrpt_graphslam_2d/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_slam/mrpt_icp_slam_2d/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_navigation/mrpt_localization/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_navigation/mrpt_map/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_navigation/mrpt_rawlog/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_slam/mrpt_rbpf_slam/include/**",
+        "/home/coffee/catkin_ws/src/mrpt_sensors/mrpt_sensorlib/include/**",
+        "/home/coffee/catkin_ws/src/navigation/nav_core/include/**",
+        "/home/coffee/catkin_ws/src/navigation/navfn/include/**",
+        "/home/coffee/catkin_ws/src/navigation/rotate_recovery/include/**",
+        "/home/coffee/catkin_ws/src/rviz_navigation_plugin/include/**",
+        "/home/coffee/catkin_ws/src/sick_scan/include/**",
+        "/home/coffee/catkin_ws/src/teleop_twist_joy/include/**",
+        "/home/coffee/catkin_ws/src/navigation/voxel_grid/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
