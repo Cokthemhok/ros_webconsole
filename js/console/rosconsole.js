@@ -179,6 +179,16 @@ ROSCONSOLE.RadioController = function(divID, nav) {
 				nav.setControlType('disable');
 			}
 		});
+		this.controllers.push({
+			radio_name: 'initpose',
+			name: 'Initial pose',
+			func_run: function (e) {
+				nav.setControlType('initpose');
+			},
+			func_stop: function (e) {
+				nav.setControlType('disable');
+			}
+		})
 		// Launch all function
     $( divID  ).bind( 'change', function( e ) {
 			var name = e.target.id.replace(/^radio-map-/, '');
