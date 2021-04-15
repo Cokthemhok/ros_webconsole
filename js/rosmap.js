@@ -67,7 +67,8 @@ ROSMAP.Editor = function(options) {
   // Draw information
   this.strokeSize = options.strokeSize || 1;
   this.strokeColor = options.strokeColor || createjs.Graphics.getRGB(0, 0, 0);
-
+  this.orgX = this.rootObject.x;
+  this.orgY = this.rootObject.y;
   // subscribe to the topic
   var mapEditorTopic = new ROSLIB.Topic({
     ros : ros,
@@ -185,10 +186,17 @@ ROSMAP.Editor = function(options) {
   this.handleMouseDown = function(event) {
     if(!pressed) { pressed = true; }
     if (!event.primary) { return; }
-    var position = that.rootObject.globalToRos(event.stageX, -event.stageY);
+    var x = event.stageX;
+    var y = event.stageY;
+    y = - that.rootObject.y + that.orgY + y
+    console.log("Mouse pos:" + y);
+    var position = that.rootObject.globalToRos(x, -y);
+
+    console.log("position pre: " + position.y);
     position.x = (position.x - that.map.x)/that.map.scaleX;
     position.y = (position.y + that.map.y)/that.map.scaleY;
     oldPt = new createjs.Point(position.x, position.y);
+    console.log("Position new: " + position.y);
     oldMidPt = oldPt.clone();
     that.rootObject.addEventListener('stagemousemove', handleMouseMove);
   };

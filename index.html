@@ -37,9 +37,12 @@
   <script src="js/rosmap.js"></script>
   <script src="js/console/rosconsole.js"></script>
 
+  <!-- JOYSTICK - Control robot -->
+  <script src="js/nipplejs.js"></script>
+  <script src="js/joystick.js"></script>
+
   <script>
     $(document).ready(function() {
-
       var heightHeader = $(this).find('[data-role="header"]').height();
       var widthPage = $(window).width() - 16 * 2;
       var heightPage = $(window).height() - heightHeader - 16 * 2 - 110;
@@ -130,8 +133,14 @@
             map_editor.enable(false);
           }
         });
+        map_editor.enable(false);
         // Initialize map editor controller
         ROSCONSOLE.initEditor(map_editor, '#nav-button-controllers');
+        cmd_vel_listener = new ROSLIB.Topic({
+          ros : ros.ros,
+          name : "/cmd_vel",
+          messageType : 'geometry_msgs/Twist'
+        });
       };
 
       $.getJSON( "config.json" )
@@ -145,6 +154,7 @@
       });
 
     });
+    
   </script>
   <style>
     #threed-map canvas {
@@ -178,13 +188,21 @@
             <div class="ui-grid-a">
                 <div id="nav" class="ui-block-a map2D"></div>
                 <div id="nav-menu" class="ui-block-b">
+                    <div class="ui-body ui-body-a ui-corner-all">
+                      <b class="ui-bar ui-bar-a ui-corner-all">Manual control</b>
+                      <div class="ui-body ui-body-a ui-corner-all" style="height: 180px;">
+                        <div id="zone_joystick"></div>
+                      </div>
+                    </div>
                     <h3 class="ui-bar ui-bar-a ui-corner-all">Map controller</h3>
                     <div class="ui-body ui-body-a ui-corner-all">
                       <form id="nav-controller">
                             <fieldset data-role="controlgroup">
                                 <input type="radio" name="radio-choice-v-2" id="radio-map-zoom" value="on" checked="checked">
                                 <label for="radio-map-zoom">Zoom</label>
-                                <input type="radio" name="radio-choice-v-2" id="radio-map-initpose" value="off" checked="checked">
+                                <input type="radio" name="radio-choice-v-2" id="radio-map-pan" value="off">
+                                <label for="radio-map-pan">Pan</label>
+                                <input type="radio" name="radio-choice-v-2" id="radio-map-initpose" value="off">
                                 <label for="radio-map-initpose">Initial pose</label>
                                 <input type="radio" name="radio-choice-v-2" id="radio-map-goal" value="off">
                                 <label for="radio-map-goal">Set goal</label>

@@ -135,7 +135,7 @@ NAV2D.Navigator = function(options) {
   this.rootObject = options.rootObject || new createjs.Container();
 
   this.goalMarker = null;
-  this.control_type = 'scroll';
+  this.control_type = 'zoom';
 
   // setup the actionlib client
   var actionClient = new ROSLIB.ActionClient({
@@ -214,6 +214,7 @@ NAV2D.Navigator = function(options) {
 
     goal.on('result', function() {
       that.rootObject.removeChild(that.goalMarker);
+      that.goalMarker = null;
     });
   }
 
@@ -308,6 +309,12 @@ NAV2D.Navigator = function(options) {
     pathShape.scaleY = 1.0 / stage.scaleY;
   });
 
+  this.panView = new ROS2D.PanView({
+    rootObject: this.rootObject
+  })
+  this.zoomView = new ROS2D.ZoomView({
+    rootObject: this.rootObject
+  })
   if (withOrientation === false){
     // setup a double click listener (no orientation)
     this.rootObject.addEventListener('dblclick', function(event) {
@@ -319,7 +326,7 @@ NAV2D.Navigator = function(options) {
         if(that.control_type == 'goal') {
             // send the goal
             sendGoal(pose);
-        } else {
+        } else if (that.control_type == 'initpose') {
             // Send initial position
             sendInit(pose);
         }
@@ -328,6 +335,7 @@ NAV2D.Navigator = function(options) {
     // setup a click-and-point listener (with orientation)
     var position = null;
     var positionVec3 = null;
+    var prePosition = null; //For save mouse pre-position when mouse moving
     var thetaRadians = 0;
     var thetaDegrees = 0;
     var orientationMarker = null;
@@ -340,8 +348,17 @@ NAV2D.Navigator = function(options) {
       if (mouseState === 'down'){
         // get position when mouse button is pressed down
         position = stage.globalToRos(event.stageX, event.stageY);
+        prePosition = event.stageY;
         positionVec3 = new ROSLIB.Vector3(position);
         mouseDown = true;
+        switch (that.control_type){
+          case 'zoom':
+            that.zoomView.startZoom(position.x,position.y);
+            break;
+          case 'pan':
+            that.panView.startPan(event.stageX,event.stageY);
+            break;
+        }
       }
       else if (mouseState === 'move'){
         // remove obsolete orientation marker
@@ -355,22 +372,6 @@ NAV2D.Navigator = function(options) {
           var currentPos = stage.globalToRos(event.stageX, event.stageY);
           var currentPosVec3 = new ROSLIB.Vector3(currentPos);
 
-          if (use_image && ROS2D.hasOwnProperty('ImageNavigator')) {
-            orientationMarker = new ROS2D.ImageNavigator({
-              size: 2.5,
-              image: use_image,
-              alpha: 0.7,
-              pulse: false
-            });
-          } else {
-            orientationMarker = new ROS2D.NavigationArrow({
-              size : 25,
-              strokeSize : 1,
-              fillColor : createjs.Graphics.getRGB(0, 255, 0, 0.66),
-              pulse : false
-            });
-          }
-
           xDelta =  currentPosVec3.x - positionVec3.x;
           yDelta =  currentPosVec3.y - positionVec3.y;
 
@@ -383,16 +384,46 @@ NAV2D.Navigator = function(options) {
           } else {
             thetaDegrees -= 90;
           }
-
-          orientationMarker.x =  positionVec3.x;
-          orientationMarker.y = -positionVec3.y;
-          orientationMarker.rotation = thetaDegrees;
-          orientationMarker.scaleX = 1.0 / stage.scaleX;
-          orientationMarker.scaleY = 1.0 / stage.scaleY;
-
-          that.rootObject.addChild(orientationMarker);
+          if(that.control_type=='goal' || that.control_type == 'initpose'){
+            if (use_image && ROS2D.hasOwnProperty('ImageNavigator')) {
+              orientationMarker = new ROS2D.ImageNavigator({
+                size: 2.5,
+                image: use_image,
+                alpha: 0.7,
+                pulse: false
+              });
+            } else {
+              orientationMarker = new ROS2D.NavigationArrow({
+                size : 25,
+                strokeSize : 1,
+                fillColor : createjs.Graphics.getRGB(0, 255, 0, 0.66),
+                pulse : false
+              });
+            }
+  
+            orientationMarker.x =  positionVec3.x;
+            orientationMarker.y = -positionVec3.y;
+            orientationMarker.rotation = thetaDegrees;
+            orientationMarker.scaleX = 1.0 / stage.scaleX;
+            orientationMarker.scaleY = 1.0 / stage.scaleY;
+  
+            that.rootObject.addChild(orientationMarker);
+          }else if(that.control_type =='zoom' || that.control_type == 'pan'){
+            switch (that.control_type){
+              case 'zoom':
+                var zoomrate = event.stageY > prePosition ? 1.03:0.97;
+                that.zoomView.zoom(zoomrate);
+                prePosition = event.stageY;
+                that.zoomView.startZoom(currentPos.x,currentPos.y);
+                break;
+              case 'pan':
+                that.panView.pan(event.stageX,event.stageY);
+                that.panView.startPan(event.stageX,event.stageY);
+                break;
+            }
+          }
         }
-      } else if (mouseDown) { // mouseState === 'up'
+      } else if ((mouseState === 'up')&&(mouseDown)) { // mouseState === 'up'
         // if mouse button is released
         // - get current mouse position (goalPos)
         // - calulate direction between stored <position> and goal position
@@ -427,7 +458,9 @@ NAV2D.Navigator = function(options) {
         if(that.control_type == 'goal') {
             // send the goal
             sendGoal(pose);
-        } else {
+            console.log("Pos: " + position.x + "-" + position.y);
+            console.log("3D: " + positionVec3.x + "-" + positionVec3.y);
+        } else if (that.control_type == 'initpose'){
             // Send initial position
             sendInit(pose);
         }
@@ -435,17 +468,17 @@ NAV2D.Navigator = function(options) {
     };
 
     this.rootObject.addEventListener('stagemousedown', function(event) {
-      if(that.control_type == 'goal' || that.control_type == 'initpose')
+      if(that.control_type == 'goal' || that.control_type == 'initpose'|| that.control_type == 'zoom' || that.control_type == 'pan')
         mouseEventHandler(event,'down');
     });
 
     this.rootObject.addEventListener('stagemousemove', function(event) {
-      if(that.control_type == 'goal' || that.control_type == 'initpose')
+      if(that.control_type == 'goal' || that.control_type == 'initpose'|| that.control_type == 'zoom' || that.control_type == 'pan')
         mouseEventHandler(event,'move');
     });
 
     this.rootObject.addEventListener('stagemouseup', function(event) {
-      if(that.control_type == 'goal' || that.control_type == 'initpose')
+      if(that.control_type == 'goal' || that.control_type == 'initpose'|| that.control_type == 'zoom' || that.control_type == 'pan')
         mouseEventHandler(event,'up');
     });
   }
@@ -524,4 +557,5 @@ NAV2D.OccupancyGridClientNav = function(options) {
 
 NAV2D.OccupancyGridClientNav.prototype.setControlType = function(type) {
 	this.navigator.control_type = type;
+  console.log("Control type: " + type);
 };

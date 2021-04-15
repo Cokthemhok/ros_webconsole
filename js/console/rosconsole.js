@@ -163,12 +163,22 @@ ROSCONSOLE.RadioController = function(divID, nav) {
       radio_name: 'zoom',
 			name: 'Zoom',
 			func_run: function (e) {
-				nav.setControlType('scroll');
+				nav.setControlType('zoom');
 			},
 			func_stop: function (e) {
 				nav.setControlType('disable');
 			}
 		});
+		this.controllers.push({
+			radio_name: 'pan',
+				  name: 'Pan',
+				  func_run: function (e) {
+					  nav.setControlType('pan');
+				  },
+				  func_stop: function (e) {
+					  nav.setControlType('disable');
+				  }
+			  });
 		this.controllers.push({
       radio_name: 'goal',
 			name: 'Set goal',
